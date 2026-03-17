@@ -4,7 +4,7 @@ import {
   AlertTriangle, DollarSign, ClipboardList, BarChart2, Map as MapIcon, Clock,
   Home, List, PieChart, Bot, MessageSquare, User, Settings, Folder, Star, History,
   Sparkles, ArrowUpRight, ArrowDownRight, ArrowRight, CheckCircle2, ChevronDown,
-  Send, UserCircle2
+  Send, UserCircle2, Network
 } from 'lucide-react';
 
 const agentData: Record<string, any> = {
@@ -233,7 +233,92 @@ interface ChatMessage {
   content: string;
 }
 
+function LandingPage({ onStart }: { onStart: () => void }) {
+  // Floating agent icons for the background
+  const floatingAgents = [
+    { Icon: AlertTriangle, delay: 0, x: '10%', y: '20%' },
+    { Icon: DollarSign, delay: 2, x: '80%', y: '15%' },
+    { Icon: ClipboardList, delay: 1, x: '25%', y: '70%' },
+    { Icon: BarChart2, delay: 3, x: '75%', y: '80%' },
+    { Icon: MapIcon, delay: 1.5, x: '50%', y: '10%' },
+    { Icon: Clock, delay: 2.5, x: '15%', y: '45%' },
+    { Icon: Network, delay: 0.5, x: '85%', y: '50%' },
+  ];
+
+  return (
+    <div className="relative min-h-screen bg-slate-950 overflow-hidden flex items-center justify-center font-sans">
+      {/* Agentic AI Wallpaper Background */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2000&auto=format&fit=crop" 
+          alt="AI Network" 
+          className="w-full h-full object-cover opacity-20 mix-blend-luminosity"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/50 via-slate-950/80 to-slate-950" />
+        
+        {/* Floating Agent Nodes */}
+        {floatingAgents.map((agent, idx) => (
+          <motion.div
+            key={idx}
+            className="absolute text-blue-500/30"
+            style={{ left: agent.x, top: agent.y }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0.3, 0.6, 0.3],
+              scale: [1, 1.1, 1]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              delay: agent.delay,
+              ease: "easeInOut"
+            }}
+          >
+            <agent.Icon size={48} />
+          </motion.div>
+        ))}
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl px-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="flex flex-col items-center"
+        >
+          <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center text-white font-bold text-5xl shadow-2xl shadow-blue-500/40 mb-8 border border-white/10">
+            I
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight">
+            IPMS <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">AI Workbench</span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-slate-300 mb-12 leading-relaxed max-w-2xl font-light">
+            Empowering Sarawak State Development with Agentic AI. 
+            Analyze risks, predict budgets, and optimize project timelines in real-time.
+          </p>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onStart}
+            className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-slate-900 font-bold text-lg rounded-full overflow-hidden transition-all hover:shadow-xl hover:shadow-blue-500/30"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              Launch Workbench <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+            </span>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-indigo-100 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </motion.button>
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
+  const [currentView, setCurrentView] = useState<'landing' | 'workbench'>('landing');
   const [activeAgentId, setActiveAgentId] = useState<string | null>(null);
   const [selectedValue, setSelectedValue] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -306,12 +391,19 @@ export default function App() {
     }, 1500);
   };
 
+  if (currentView === 'landing') {
+    return <LandingPage onStart={() => setCurrentView('workbench')} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
       {/* Header */}
       <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-8">
-          <div className="flex items-center gap-3">
+          <div 
+            className="flex items-center gap-3 cursor-pointer" 
+            onClick={() => setCurrentView('landing')}
+          >
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
               I
             </div>
