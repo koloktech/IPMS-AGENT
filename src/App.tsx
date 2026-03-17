@@ -371,7 +371,12 @@ export default function App() {
 
   // Auto-scroll chat to bottom
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Only auto-scroll if there's more than just the initial greeting message,
+    // or if the AI is currently typing a response. This prevents the page from
+    // jumping down to the chat when the report is first generated.
+    if (chatMessages.length > 1 || isChatTyping) {
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }, [chatMessages, isChatTyping]);
 
   const handleSendMessage = (text: string) => {
